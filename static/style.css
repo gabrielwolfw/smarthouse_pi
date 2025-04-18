@@ -1,0 +1,41 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f2f5;
+    text-align: center;
+}
+
+.container {
+    width: 90%;
+    margin: auto;
+}
+
+.house-image {
+    width: 100%;
+    max-width: 600px;
+    display: block;
+    position: relative;
+}
+
+#house-layout {
+    position: relative;
+    display: inline-block;
+}
+
+.device {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    padding: 5px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.light {
+    background-color: yellow;
+    border: 1px solid #aaa;
+}
+
+.door {
+    background-color: lightgreen;
+    border: 1px solid #aaa;
+}
