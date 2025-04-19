@@ -1,14 +1,131 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
+    <meta charset="UTF-8">
     <title>Casa Inteligente</title>
-    <script src="/static/app.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h1>Control de Casa Inteligente</h1>
-    <div id="lights"></div>
-    <div id="doors"></div>
-    <button onclick="capturePhoto()">Capturar imagen</button>
-    <img id="photo" width="300">
+    <h1>Casa Inteligente</h1>
+
+    <div class="house-grid">
+        <!-- Fila 1: Cuarto 2 | Pasillo | Comedor -->
+        <div class="room cuarto2">
+            <div class="label">Cuarto 2</div>
+            <button class="icon-btn light" id="light-cuarto2" onclick="toggleLight('cuarto2')">
+                <i class="fas fa-lightbulb"></i>
+            </button>
+            <button class="icon-btn door" id="door-cuarto2" onclick="toggleDoor('cuarto2')">
+                <i class="fas fa-door-open"></i>
+            </button>
+        </div>
+        <div class="pasillo">
+            <div class="label">Pasillo</div>
+            <button class="icon-btn door" id="door-trasera" onclick="toggleDoor('trasera')">
+                <i class="fas fa-door-open"></i>
+            </button>
+        </div>
+        <div class="room comedor">
+            <div class="label">Comedor</div>
+            <button class="icon-btn light" id="light-comedor" onclick="toggleLight('comedor')">
+                <i class="fas fa-lightbulb"></i>
+            </button>
+        </div>
+
+        <!-- Fila 2: Cuarto 1 | Pasillo | Cocina -->
+        <div class="room cuarto1">
+            <div class="label">Cuarto 1</div>
+            <button class="icon-btn light" id="light-cuarto1" onclick="toggleLight('cuarto1')">
+                <i class="fas fa-lightbulb"></i>
+            </button>
+            <button class="icon-btn door" id="door-cuarto1" onclick="toggleDoor('cuarto1')">
+                <i class="fas fa-door-open"></i>
+            </button>
+        </div>
+        <div class="pasillo">
+            <div class="label">Pasillo</div>
+        </div>
+        <div class="room cocina">
+            <div class="label">Cocina</div>
+            <button class="icon-btn light" id="light-cocina" onclick="toggleLight('cocina')">
+                <i class="fas fa-lightbulb"></i>
+            </button>
+        </div>
+
+        <!-- Fila 3: Sala | Sala | Cámara -->
+        <div class="room sala" style="grid-column: span 2">
+            <div class="label">Sala</div>
+            <button class="icon-btn light" id="light-sala" onclick="toggleLight('sala')">
+                <i class="fas fa-lightbulb"></i>
+            </button>
+            <button class="icon-btn door" id="door-delantera" onclick="toggleDoor('delantera')">
+                <i class="fas fa-door-open"></i>
+            </button>
+        </div>
+        <div class="camera-area">
+            <div class="label">Cámara</div>
+            <button class="icon-btn camera" onclick="captureImage()">
+                <i class="fas fa-video"></i>
+            </button>
+            <img id="snapshot" src="" style="display:none; margin-top: 10px; max-width: 100%;">
+        </div>
+    </div>
+
+    <script>
+        function updateState(type, id, active) {
+            const btn = document.getElementById(`${type}-${id}`);
+            const icon = btn.querySelector('i');
+            if (active) {
+                icon.classList.add('active');
+                btn.classList.add('active');
+            } else {
+                icon.classList.remove('active');
+                btn.classList.remove('active');
+            }
+        }
+
+        async function toggleLight(room) {
+            const btn = document.getElementById('light-' + room);
+            const active = !btn.classList.contains('active');
+            updateState('light', room, active);
+            await fetch('/api/lights', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ room, state: active })
+            });
+        }
+
+        async function toggleDoor(name) {
+            const btn = document.getElementById('door-' + name);
+            const active = !btn.classList.contains('active');
+            updateState('door', name, active);
+            await fetch('/api/toggle_door', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ name, state: active })
+            });
+        }
+
+        async function captureImage() {
+            const res = await fetch('/api/capture');
+            const data = await res.json();
+            const img = document.getElementById('snapshot');
+            img.src = data.image + '?t=' + new Date().getTime();
+            img.style.display = 'block';
+        }
+
+        async function syncStates() {
+            const lightRes = await fetch('/api/lights');
+            const lights = await lightRes.json();
+            Object.entries(lights).forEach(([room, state]) => updateState('light', room, state));
+
+            const doorRes = await fetch('/api/doors');
+            const doors = await doorRes.json();
+            Object.entries(doors).forEach(([name, state]) => updateState('door', name, state));
+        }
+
+        syncStates();
+    </script>
 </body>
 </html>
