@@ -2,7 +2,7 @@
 
 
 ## Toolchain
-Ejecutar script para configuraci´on de ambiente de compilaci´on, utilizando el toolchain
+Ejecutar script para configuración de ambiente de compilación, utilizando el toolchain
 instalado:
 
 ```
