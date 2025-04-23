@@ -9,6 +9,11 @@ instalado:
 . /opt/poky/5.0.9/environment-setup-cortexa7t2hf-neon-vfpv4-poky-linux-gnueabi
 ```
 
+Comprobar el ambiente:
+```
+echo $CC
+```
+
 Luego se debe hacer un a ejecución:
 ```
 make
