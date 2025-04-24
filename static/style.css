@@ -172,4 +172,39 @@ img#snapshot {
   button[type="submit"]:hover {
     background-color: #2563eb;
   }
+
+  .alert {
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+  }
   
+  .alert-error {
+    background-color: #fee2e2;
+    color: #b91c1c;
+    border: 1px solid #fca5a5;
+  }
+  
+  .alert-success {
+    background-color: #dcfce7;
+    color: #166534;
+    border: 1px solid #86efac;
+  }
+  
+  /* Botón de logout */
+.logout-btn {
+  background: #ff4444 !important;
+  color: white !important;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+
+.logout-btn:hover {
+  background: #cc0000 !important;
+}

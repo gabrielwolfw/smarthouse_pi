@@ -1,20 +1,22 @@
-from flask import Flask, render_template, request, jsonify, redirect, session, url_for
-from werkzeug.security import check_password_hash, generate_password_hash
+from flask import Flask, render_template, request, jsonify, session, redirect, url_for
 from flask_cors import CORS
 import os
 import datetime
-import random
+from auth import setup_auth_routes, login_required
 
 app = Flask(__name__)
-app.secret_key = "super-secret-key"  # Reemplazar en producción
+app.secret_key = os.environ.get("SECRET_KEY") or "dev-key-insecure"  # Cambiar en producción
+app.config['SESSION_COOKIE_SECURE'] = False  # True en producción con HTTPS
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+
+# Configurar rutas de autenticación
+setup_auth_routes(app)
+
+# Configuración de CORS
 CORS(app)
 
-# Usuario y contraseña (en producción usar base de datos y HTTPS)
-users = {
-    "admin": generate_password_hash("1234")
-}
-
-# Detección de hardware
+# Simulación de hardware
 try:
     import RPi.GPIO as GPIO
     real_hardware = True
@@ -53,35 +55,16 @@ else:
     simulated_lights = {room: False for room in light_pins}
     simulated_doors = {door: False for door in door_pins}
 
-# Rutas
+# Rutas principales
 @app.route('/')
+@login_required
 def home():
-    if 'user' in session:
-        return render_template('index.html')
-    return redirect(url_for('login'))
+    return render_template('index.html')
 
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        user = request.form['username']
-        pwd = request.form['password']
-        if user in users and check_password_hash(users[user], pwd):
-            session['user'] = user
-            return redirect(url_for('home'))
-        else:
-            return "Credenciales incorrectas", 401
-    return render_template('login.html')
-
-@app.route('/logout')
-def logout():
-    session.pop('user', None)
-    return redirect(url_for('login'))
-
+# API para control de luces
 @app.route('/api/lights', methods=['GET', 'POST'])
+@login_required
 def light_control():
-    if 'user' not in session:
-        return jsonify({'error': 'No autorizado'}), 403
-
     if request.method == 'POST':
         data = request.json
         room = data['room']
@@ -98,22 +81,20 @@ def light_control():
         lights_state = simulated_lights
     return jsonify(lights_state)
 
+# API para estado de puertas
 @app.route('/api/doors', methods=['GET'])
+@login_required
 def door_status():
-    if 'user' not in session:
-        return jsonify({'error': 'No autorizado'}), 403
-
     if real_hardware:
         doors_state = {name: GPIO.input(pin) == GPIO.HIGH for name, pin in door_pins.items()}
     else:
         doors_state = simulated_doors
     return jsonify(doors_state)
 
+# API para cambiar estado de puertas
 @app.route('/api/toggle_door', methods=['POST'])
+@login_required
 def toggle_door():
-    if 'user' not in session:
-        return jsonify({'error': 'No autorizado'}), 403
-
     data = request.json
     name = data['name']
     state = data['state']
@@ -121,11 +102,10 @@ def toggle_door():
         simulated_doors[name] = state
     return jsonify({'success': True})
 
+# API para captura de imagen
 @app.route('/api/capture', methods=['GET'])
+@login_required
 def capture():
-    if 'user' not in session:
-        return jsonify({'error': 'No autorizado'}), 403
-
     filename = f"static/capture_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.jpg"
     if real_hardware:
         os.system(f"fswebcam -r 640x480 --no-banner {filename}")
@@ -133,7 +113,9 @@ def capture():
         filename = "static/placeholder.jpg"
     return jsonify({"image": filename})
 
+# Ruta para apagar
 @app.route('/shutdown', methods=['POST'])
+@login_required
 def shutdown():
     if real_hardware:
         GPIO.cleanup()
@@ -145,3 +127,4 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         if real_hardware:
             GPIO.cleanup()
+        session.clear()

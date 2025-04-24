@@ -9,6 +9,26 @@
 <body>
     <h1>Casa Inteligente</h1>
 
+    <div style="position: absolute; top: 20px; right: 20px;">
+        <button onclick="logout()" style="
+            background: #ff4444;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        ">
+            <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+        </button>
+    </div>
+    
+    <script>
+        async function logout() {
+            await fetch('/logout', { method: 'POST' });
+            window.location.href = '/login';  // Redirige al login
+        }
+    </script>
+
     <div class="house-grid">
         <!-- Fila 1: Cuarto 2 | Pasillo | Comedor -->
         <div class="room cuarto2">
