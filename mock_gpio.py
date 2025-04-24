@@ -1,30 +1,30 @@
-# mock_gpio.py
-
-BCM = "BCM"
-OUT = "OUT"
-IN = "IN"
-HIGH = True
-LOW = False
-PUD_DOWN = "PUD_DOWN"
-
-_pins = {}
-
-def setmode(mode):
-    print(f"[MOCK GPIO] setmode({mode})")
-
-def setwarnings(flag):
-    pass
-
-def setup(pin, mode, pull_up_down=None):
-    print(f"[MOCK GPIO] setup(pin={pin}, mode={mode}, pud={pull_up_down})")
-    _pins[pin] = LOW
-
-def output(pin, value):
-    print(f"[MOCK GPIO] output(pin={pin}, value={value})")
-    _pins[pin] = value
-
-def input(pin):
-    return _pins.get(pin, LOW)
-
-def cleanup():
-    print("[MOCK GPIO] cleanup()")
+class MockGPIO:
+    def __init__(self):
+        self.BCM = "BCM"
+        self.OUT = "OUT"
+        self.IN = "IN"
+        self.HIGH = True
+        self.LOW = False
+        self.PUD_DOWN = "PUD_DOWN"
+        self._pins = {}
+    
+    def setmode(self, mode):
+        print(f"[MOCK] Modo establecido: {mode}")
+    
+    def setwarnings(self, flag):
+        pass
+    
+    def setup(self, pin, mode, pull_up_down=None):
+        print(f"[MOCK] Configurando pin {pin} como {mode}")
+        self._pins[pin] = self.LOW
+    
+    def output(self, pin, value):
+        print(f"[MOCK] Escribiendo {value} en pin {pin}")
+        self._pins[pin] = value
+    
+    def input(self, pin):
+        return self._pins.get(pin, self.LOW)
+    
+    def cleanup(self):
+        print("[MOCK] Limpieza de pines")
+        self._pins.clear()
