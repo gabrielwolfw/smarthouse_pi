@@ -17,17 +17,17 @@ CORS(app)
 # ===== Configuración de GPIO =====
 light_pins = {
     'cuarto1': 17,
-    'cuarto2': 18,
+    'cuarto2': 27,
     'sala': 22,
-    'comedor': 23,
-    'cocina': 24
+    'comedor': 5,
+    'cocina': 6
 }
 
 door_pins = {
-    'delantera': 5,
-    'trasera': 6,
-    'cuarto1': 13,
-    'cuarto2': 19
+    'delantera': 26,
+    'trasera': 23,
+    'cuarto1': 24,
+    'cuarto2': 25
 }
 
 # Intenta cargar la biblioteca personalizada
@@ -116,6 +116,6 @@ def shutdown():
 
 if __name__ == "__main__":
     try:
-        app.run(host='0.0.0.0', port=5000, debug=True)
+        app.run(host='0.0.0.0', port=5000)
     except KeyboardInterrupt:
         print("\nServidor detenido")
