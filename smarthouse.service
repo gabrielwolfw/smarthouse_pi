@@ -1,0 +1,12 @@
+[Unit]
+Description=Servidor Casa Inteligente Flask
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/smarthouse
+ExecStart=/usr/bin/python3 backend.py
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
