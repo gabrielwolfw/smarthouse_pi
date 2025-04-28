@@ -21,7 +21,9 @@ function loadDoors() {
     fetch('/api/doors').then(res => res.json()).then(data => {
         let html = "<h2>Puertas</h2><ul>";
         for (let door in data) {
-            html += `<li>${door}: ${data[door] ? "Abierta" : "Cerrada"}</li>`;
+            let doorObj = data[door];
+            let estado = doorObj.estado; // "abierta" o "cerrada"
+            html += `<li>${door}: <span>${estado}</span></li>`;
         }
         html += "</ul>";
         document.getElementById("doors").innerHTML = html;

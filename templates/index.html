@@ -116,16 +116,17 @@
             });
         }
 
-        async function toggleDoor(name) {
-            const btn = document.getElementById('door-' + name);
-            const active = !btn.classList.contains('active');
-            updateState('door', name, active);
-            await fetch('/api/toggle_door', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ name, state: active })
-            });
-        }
+        // async function toggleDoor(name) {
+        //     const btn = document.getElementById('door-' + name);
+        //     const active = !btn.classList.contains('active');
+        //     updateState('door', name, active);
+        //     await fetch('/api/toggle_door', {
+        //         method: 'POST',
+        //         headers: {'Content-Type': 'application/json'},
+        //         body: JSON.stringify({ name, state: active })
+        //     });
+        //     await syncStates();
+        // }
 
         async function captureImage() {
             const res = await fetch('/api/capture');
@@ -142,10 +143,27 @@
 
             const doorRes = await fetch('/api/doors');
             const doors = await doorRes.json();
-            Object.entries(doors).forEach(([name, state]) => updateState('door', name, state));
+            Object.entries(doors).forEach(([name, obj]) => {
+                const btn = document.getElementById(`door-${name}`);
+                const icon = btn ? btn.querySelector('i') : null;
+                const stateSpan = document.getElementById(`door-${name}-state`);
+                if (icon) {
+                    if (obj.valor) {
+                        icon.classList.add('active');
+                        btn.classList.add('active');
+                    } else {
+                        icon.classList.remove('active');
+                        btn.classList.remove('active');
+                    }
+                }
+                if (stateSpan) {
+                    stateSpan.textContent = obj.estado; // "abierta" o "cerrada"
+                }
+            });
         }
 
         syncStates();
+        setInterval(syncStates, 3000);
     </script>
 </body>
 </html>

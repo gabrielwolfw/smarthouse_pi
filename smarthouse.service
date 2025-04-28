@@ -4,7 +4,7 @@ After=network.target
 
 [Service]
 Type=simple
-WorkingDirectory=/opt/smarthouse
+WorkingDirectory=/usr/smarthouse
 ExecStart=/usr/bin/python3 backend.py
 Restart=on-failure
 

@@ -81,21 +81,33 @@ def light_control():
 @app.route('/api/doors', methods=['GET'])
 @login_required
 def door_status():
+    def pin_to_state(value):
+        # Ajusta la lógica según tu hardware
+        return "abierta" if value else "cerrada"
+    
     if real_hardware:
-        doors_state = {name: read_pin(pin) for name, pin in door_pins.items()}
+        doors_state = {
+            name: {
+                "valor": read_pin(pin),
+                "estado": pin_to_state(read_pin(pin))
+            }
+            for name, pin in door_pins.items()
+        }
     else:
-        doors_state = simulated_doors
+        doors_state = {
+            name: {
+                "valor": value,
+                "estado": pin_to_state(value)
+            }
+            for name, value in simulated_doors.items()
+        }
     return jsonify(doors_state)
 
 @app.route('/api/toggle_door', methods=['POST'])
 @login_required
 def toggle_door():
-    if not real_hardware:
-        data = request.json
-        name = data['name']
-        state = data['state']
-        simulated_doors[name] = state
-    return jsonify({'success': True})
+    # No hace nada si real_hardware o si solo quieres visualización
+    return jsonify({'success': False, 'message': 'Operación no permitida'})
 
 @app.route('/api/capture', methods=['GET'])
 @login_required
