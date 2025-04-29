@@ -9,6 +9,14 @@ function loadLights() {
     });
 }
 
+function setAllLights(state) {
+    fetch('/api/lights/all', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({state})
+    }).then(() => loadLights());
+}
+
 function toggleLight(room, state) {
     fetch('/api/lights', {
         method: 'POST',
@@ -41,7 +49,7 @@ function capturePhoto() {
 setInterval(() => {
     loadLights();
     loadDoors();
-}, 3000);
+}, 2000);
 
 window.onload = () => {
     loadLights();

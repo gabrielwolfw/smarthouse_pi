@@ -78,6 +78,20 @@ def light_control():
         lights_state = simulated_lights
     return jsonify(lights_state)
 
+
+@app.route('/api/lights/all', methods=['POST'])
+@login_required
+def lights_all_control():
+    data = request.json
+    state = data['state']
+    if real_hardware:
+        for pin in light_pins.values():
+            write_pin(pin, state)
+    else:
+        for key in simulated_lights:
+            simulated_lights[key] = state
+    return jsonify({'success': True})
+
 @app.route('/api/doors', methods=['GET'])
 @login_required
 def door_status():

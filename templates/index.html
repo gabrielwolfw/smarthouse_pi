@@ -9,6 +9,32 @@
 <body>
     <h1>Casa Inteligente</h1>
 
+    <!-- Botones globales de luces -->
+    <div id="all-lights-controls" style="margin-bottom: 22px; display: flex; gap: 10px;">
+        <button id="btn-all-on" onclick="setAllLights(true)" class="lights-global-btn">
+            <i class="fas fa-lightbulb"></i>
+            <span class="label-btn">Encender todas</span>
+        </button>
+        <button id="btn-all-off" onclick="setAllLights(false)" class="lights-global-btn">
+            <i class="fas fa-lightbulb"></i>
+            <span class="label-btn">Apagar todas</span>
+        </button>
+    </div>
+    
+
+    <div style="position: absolute; top: 20px; right: 20px;">
+        <button onclick="logout()" style="
+            background: #ff4444;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        ">
+            <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+        </button>
+    </div>
+
     <div style="position: absolute; top: 20px; right: 20px;">
         <button onclick="logout()" style="
             background: #ff4444;
@@ -88,11 +114,26 @@
             <button class="icon-btn camera" onclick="captureImage()">
                 <i class="fas fa-video"></i>
             </button>
-            <img id="snapshot" src="" style="display:none; margin-top: 10px; max-width: 100%;">
+            <!-- Aquí la imagen normal, visible tras capturar -->
+            <img id="snapshot" src="" style="display:none; margin-top: 10px; max-width: 100%; cursor:pointer;" onclick="showModal(this.src)">
+        
+            <!-- Modal para ampliar la imagen -->
+            <div id="modal" style="display:none; position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:1000;
+                background:rgba(0,0,0,0.8); justify-content:center; align-items:center;">
+                <img id="modal-img" src="" style="max-width:90vw;max-height:90vh; box-shadow:0 0 20px #222;"/>
+                <button onclick="closeModal()" style="position:absolute;top:30px;right:40px;font-size:2em;
+                    color:white; background:none; border:none; cursor:pointer;">&times;</button>
+            </div>
         </div>
+        
     </div>
 
     <script>
+        async function logout() {
+            await fetch('/logout', { method: 'POST' });
+            window.location.href = '/login';  // Redirige al login
+        }
+
         function updateState(type, id, active) {
             const btn = document.getElementById(`${type}-${id}`);
             const icon = btn.querySelector('i');
@@ -116,24 +157,29 @@
             });
         }
 
-        // async function toggleDoor(name) {
-        //     const btn = document.getElementById('door-' + name);
-        //     const active = !btn.classList.contains('active');
-        //     updateState('door', name, active);
-        //     await fetch('/api/toggle_door', {
-        //         method: 'POST',
-        //         headers: {'Content-Type': 'application/json'},
-        //         body: JSON.stringify({ name, state: active })
-        //     });
-        //     await syncStates();
-        // }
-
         async function captureImage() {
             const res = await fetch('/api/capture');
             const data = await res.json();
             const img = document.getElementById('snapshot');
             img.src = data.image + '?t=' + new Date().getTime();
             img.style.display = 'block';
+        }
+        function showModal(src) {
+            document.getElementById('modal-img').src = src;
+            document.getElementById('modal').style.display = 'flex';
+        }
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+            document.getElementById('snapshot').style.display = 'none';
+        }
+
+        async function setAllLights(state) {
+            ['cuarto1','cuarto2','sala','comedor','cocina'].forEach(room => updateState('light', room, state));
+            await fetch('/api/lights/all', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({state})
+            });
         }
 
         async function syncStates() {
@@ -163,7 +209,7 @@
         }
 
         syncStates();
-        setInterval(syncStates, 3000);
+        setInterval(syncStates, 2000);
     </script>
 </body>
 </html>
