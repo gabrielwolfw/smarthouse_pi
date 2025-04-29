@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Casa Inteligente</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Casa Inteligente</h1>
+
+    <!-- Botones globales de luces -->
+    <div id="all-lights-controls" style="margin-bottom: 22px; display: flex; gap: 10px;">
+        <button id="btn-all-on" onclick="setAllLights(true)" class="lights-global-btn">
+            <i class="fas fa-lightbulb"></i>
+            <span class="label-btn">Encender todas</span>
+        </button>
+        <button id="btn-all-off" onclick="setAllLights(false)" class="lights-global-btn">
+            <i class="fas fa-lightbulb"></i>
+            <span class="label-btn">Apagar todas</span>
+        </button>
+    </div>
+    
+
+    <div style="position: absolute; top: 20px; right: 20px;">
+        <button onclick="logout()" style="
+            background: #ff4444;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        ">
+            <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+        </button>
+    </div>
+
+    <div style="position: absolute; top: 20px; right: 20px;">
+        <button onclick="logout()" style="
+            background: #ff4444;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        ">
+            <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+        </button>
+    </div>
+    
+    <script>
+        async function logout() {
+            await fetch('/logout', { method: 'POST' });
+            window.location.href = '/login';  // Redirige al login
+        }
+    </script>
+
+    <div class="house-grid">
+        <!-- Fila 1: Cuarto 2 | Pasillo | Comedor -->
+        <div class="room cuarto2">
+            <div class="label">Cuarto 2</div>
+            <button class="icon-btn light" id="light-cuarto2" onclick="toggleLight('cuarto2')">
+                <i class="fas fa-lightbulb"></i>
+            </button>
+            <button class="icon-btn door" id="door-cuarto2" onclick="toggleDoor('cuarto2')">
+                <i class="fas fa-door-open"></i>
+            </button>
+        </div>
+        <div class="pasillo">
+            <div class="label">Pasillo</div>
+            <button class="icon-btn door" id="door-trasera" onclick="toggleDoor('trasera')">
+                <i class="fas fa-door-open"></i>
+            </button>
+        </div>
+        <div class="room comedor">
+            <div class="label">Comedor</div>
+            <button class="icon-btn light" id="light-comedor" onclick="toggleLight('comedor')">
+                <i class="fas fa-lightbulb"></i>
+            </button>
+        </div>
+
+        <!-- Fila 2: Cuarto 1 | Pasillo | Cocina -->
+        <div class="room cuarto1">
+            <div class="label">Cuarto 1</div>
+            <button class="icon-btn light" id="light-cuarto1" onclick="toggleLight('cuarto1')">
+                <i class="fas fa-lightbulb"></i>
+            </button>
+            <button class="icon-btn door" id="door-cuarto1" onclick="toggleDoor('cuarto1')">
+                <i class="fas fa-door-open"></i>
+            </button>
+        </div>
+        <div class="pasillo">
+            <div class="label">Pasillo</div>
+        </div>
+        <div class="room cocina">
+            <div class="label">Cocina</div>
+            <button class="icon-btn light" id="light-cocina" onclick="toggleLight('cocina')">
+                <i class="fas fa-lightbulb"></i>
+            </button>
+        </div>
+
+        <!-- Fila 3: Sala | Sala | Cámara -->
+        <div class="room sala" style="grid-column: span 2">
+            <div class="label">Sala</div>
+            <button class="icon-btn light" id="light-sala" onclick="toggleLight('sala')">
+                <i class="fas fa-lightbulb"></i>
+            </button>
+            <button class="icon-btn door" id="door-delantera" onclick="toggleDoor('delantera')">
+                <i class="fas fa-door-open"></i>
+            </button>
+        </div>
+        <div class="camera-area">
+            <div class="label">Cámara</div>
+            <button class="icon-btn camera" onclick="captureImage()">
+                <i class="fas fa-video"></i>
+            </button>
+            <!-- Aquí la imagen normal, visible tras capturar -->
+            <img id="snapshot" src="" style="display:none; margin-top: 10px; max-width: 100%; cursor:pointer;" onclick="showModal(this.src)">
+        
+            <!-- Modal para ampliar la imagen -->
+            <div id="modal" style="display:none; position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:1000;
+                background:rgba(0,0,0,0.8); justify-content:center; align-items:center;">
+                <img id="modal-img" src="" style="max-width:90vw;max-height:90vh; box-shadow:0 0 20px #222;"/>
+                <button onclick="closeModal()" style="position:absolute;top:30px;right:40px;font-size:2em;
+                    color:white; background:none; border:none; cursor:pointer;">&times;</button>
+            </div>
+        </div>
+        
+    </div>
+
+    <script>
+        async function logout() {
+            await fetch('/logout', { method: 'POST' });
+            window.location.href = '/login';  // Redirige al login
+        }
+
+        function updateState(type, id, active) {
+            const btn = document.getElementById(`${type}-${id}`);
+            const icon = btn.querySelector('i');
+            if (active) {
+                icon.classList.add('active');
+                btn.classList.add('active');
+            } else {
+                icon.classList.remove('active');
+                btn.classList.remove('active');
+            }
+        }
+
+        async function toggleLight(room) {
+            const btn = document.getElementById('light-' + room);
+            const active = !btn.classList.contains('active');
+            updateState('light', room, active);
+            await fetch('/api/lights', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ room, state: active })
+            });
+        }
+
+        async function captureImage() {
+            const res = await fetch('/api/capture');
+            const data = await res.json();
+            const img = document.getElementById('snapshot');
+            img.src = data.image + '?t=' + new Date().getTime();
+            img.style.display = 'block';
+        }
+        function showModal(src) {
+            document.getElementById('modal-img').src = src;
+            document.getElementById('modal').style.display = 'flex';
+        }
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+            document.getElementById('snapshot').style.display = 'none';
+        }
+
+        async function setAllLights(state) {
+            ['cuarto1','cuarto2','sala','comedor','cocina'].forEach(room => updateState('light', room, state));
+            await fetch('/api/lights/all', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({state})
+            });
+        }
+
+        async function syncStates() {
+            const lightRes = await fetch('/api/lights');
+            const lights = await lightRes.json();
+            Object.entries(lights).forEach(([room, state]) => updateState('light', room, state));
+
+            const doorRes = await fetch('/api/doors');
+            const doors = await doorRes.json();
+            Object.entries(doors).forEach(([name, obj]) => {
+                const btn = document.getElementById(`door-${name}`);
+                const icon = btn ? btn.querySelector('i') : null;
+                const stateSpan = document.getElementById(`door-${name}-state`);
+                if (icon) {
+                    if (obj.valor) {
+                        icon.classList.add('active');
+                        btn.classList.add('active');
+                    } else {
+                        icon.classList.remove('active');
+                        btn.classList.remove('active');
+                    }
+                }
+                if (stateSpan) {
+                    stateSpan.textContent = obj.estado; // "abierta" o "cerrada"
+                }
+            });
+        }
+
+        syncStates();
+        setInterval(syncStates, 2000);
+    </script>
+</body>
+</html>

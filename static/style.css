@@ -1,0 +1,280 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #1e293b;
+    text-align: center;
+    margin: 0;
+    padding: 1em;
+}
+
+h1 {
+    margin-bottom: 1em;
+    color: #ffffff;
+}
+
+.house-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 200px);
+    gap: 10px;
+    max-width: 900px;
+    margin: auto;
+    padding: 1em;
+    background: #fff;
+    border-radius: 12px;
+    border: 2px solid #ccc;
+}
+
+.room, .pasillo, .camera-area {
+    border: 2px solid #ccc;
+    border-radius: 1em;
+    padding: 0.5em;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #fdfdfd;
+    position: relative;
+}
+
+.pasillo {
+    background: repeating-linear-gradient(
+        45deg,
+        #e0e0e0,
+        #e0e0e0 10px,
+        #f8f8f8 10px,
+        #f8f8f8 20px
+    );
+    border-style: dashed;
+    border-color: #bbb;
+}
+
+.label {
+    font-weight: bold;
+    margin-bottom: 0.3em;
+}
+
+.icon-btn {
+    background: none;
+    border: none;
+    font-size: 2em;
+    cursor: pointer;
+    transition: 0.3s;
+    color: #999;
+    margin: 0.3em;
+}
+
+.icon-btn.light.active { color: #ffd700; transform: scale(1.2); }
+.icon-btn.door.active { color: #4caf50; transform: scale(1.2); }
+.icon-btn.camera { color: #2196f3; }
+.icon-btn.camera:hover { transform: scale(1.2); }
+
+img#snapshot {
+    margin-top: 10px;
+    max-width: 100%;
+    border: 2px solid #2196f3;
+    border-radius: 8px;
+}
+
+.login-container {
+    max-width: 400px;
+    margin: 80px auto;
+    background-color: #1e293b;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    text-align: center;
+    color: #f1f5f9;
+  }
+  
+  .login-container h2 {
+    margin-bottom: 1.5rem;
+  }
+  
+  .login-container input {
+    width: 100%;
+    padding: 0.75rem;
+    margin: 0.5rem 0;
+    border: none;
+    border-radius: 8px;
+  }
+  
+  .login-container button {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    background-color: #4ade80;
+    color: #0f172a;
+    cursor: pointer;
+    margin-top: 1rem;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+  }
+  
+  .login-container button:hover {
+    background-color: #22c55e;
+  }
+
+  .login-body {
+    background: linear-gradient(to right, #0f172a, #1e293b);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+  }
+  
+  .login-box {
+    background-color: #f1f5f9;
+    color: #1e293b;
+    padding: 2rem 2.5rem;
+    border-radius: 12px;
+    box-shadow: 0 0 25px rgba(0,0,0,0.3);
+    max-width: 400px;
+    width: 100%;
+  }
+  
+  .login-box h2 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+  
+  .input-group {
+    margin-bottom: 1rem;
+  }
+  
+  .input-group label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+  }
+  
+  .input-group input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 1rem;
+  }
+  
+  button[type="submit"] {
+    width: 100%;
+    background-color: #3b82f6;
+    color: white;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  button[type="submit"]:hover {
+    background-color: #2563eb;
+  }
+
+  .alert {
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+  }
+  
+  .alert-error {
+    background-color: #fee2e2;
+    color: #b91c1c;
+    border: 1px solid #fca5a5;
+  }
+  
+  .alert-success {
+    background-color: #dcfce7;
+    color: #166534;
+    border: 1px solid #86efac;
+  }
+  
+  /* Botón de logout */
+.logout-btn {
+  background: #ff4444 !important;
+  color: white !important;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+
+.logout-btn:hover {
+  background: #cc0000 !important;
+}
+
+/*Botones de apagar y encender todas las luces*/
+.lights-global-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #f1f5f9;
+  color: #1e293b;
+  border: none;
+  padding: 7px 15px;
+  border-radius: 7px;
+  font-size: 1em;
+  cursor: pointer;
+  box-shadow: 0 2px 9px #0001;
+  transition: background 0.18s, color 0.18s, box-shadow 0.18s, transform 0.12s;
+  outline: none;
+  font-weight: 500;
+}
+
+.lights-global-btn .fa-lightbulb {
+  font-size: 1.2em;
+  transition: color 0.18s, transform 0.2s, text-shadow 0.2s;
+}
+
+.lights-global-btn:active .fa-lightbulb {
+  transform: rotate(-17deg) scale(1.10);
+}
+
+.lights-global-btn .label-btn {
+  font-weight: 500;
+  font-size: 0.95em;
+}
+
+#btn-all-on {
+  background: #e4ffea;
+  color: #20b45b;
+}
+
+#btn-all-on.active, #btn-all-on:active {
+  background: #33cc33;
+  color: #fff;
+  box-shadow: 0 0 10px #aaffbb75;
+}
+
+#btn-all-on.active .fa-lightbulb {
+  color: #ffd700;
+  text-shadow: 0 0 8px #ffe96e, 0 0 14px #fff52f;
+}
+
+#btn-all-off {
+  background: #ffeaea;
+  color: #d34141;
+}
+
+#btn-all-off.active, #btn-all-off:active {
+  background: #ff4444;
+  color: #fff;
+  box-shadow: 0 0 10px #ffbbbb75;
+}
+
+#btn-all-off.active .fa-lightbulb {
+  color: #bbb;
+  text-shadow: none;
+}
+#all-lights-controls {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 8px; /* o el margen que prefieras */
+}
