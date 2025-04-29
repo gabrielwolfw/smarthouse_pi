@@ -1,0 +1,14 @@
+[Unit]
+Description=Servidor Casa Inteligente Flask
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/usr/smarthouse
+ExecStart=/usr/bin/python3 backend.py
+StandardOutput=file:/var/log/smarthouse.log
+StandardError=file:/var/log/smarthouse.log
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
